@@ -2,7 +2,9 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
 
 st.title("Sentiment Analysis of Tweets about US Airlines ✈️")
 st.sidebar.title("Sentiment Analysis of Tweets 🤖")
@@ -60,3 +62,49 @@ if not st.sidebar.checkbox("Close", True, key='2'):
         st.subheader("Total number of tweets for each airline")
         fig_2 = px.pie(airline_sentiment_count, values='Tweets', names='Airline')
         st.plotly_chart(fig_2)
+        
+        
+        
+@st.cache(persist=True)
+def plot_sentiment(airline):
+    df = data[data['airline']==airline]
+    count = df['airline_sentiment'].value_counts()
+    count = pd.DataFrame({'Sentiment':count.index, 'Tweets':count.values.flatten()})
+    return count
+
+
+st.sidebar.subheader("Breakdown airline by sentiment")
+choice = st.sidebar.multiselect('Pick airlines', ('US Airways','United','American','Southwest','Delta','Virgin America'))
+if len(choice) > 0:
+    st.subheader("Breakdown airline by sentiment")
+    breakdown_type = st.sidebar.selectbox('Visualization type', ['Pie chart', 'Bar plot', ], key='3')
+    fig_3 = make_subplots(rows=1, cols=len(choice), subplot_titles=choice)
+    if breakdown_type == 'Bar plot':
+        for i in range(1):
+            for j in range(len(choice)):
+                fig_3.add_trace(
+                    go.Bar(x=plot_sentiment(choice[j]).Sentiment, y=plot_sentiment(choice[j]).Tweets, showlegend=False),
+                    row=i+1, col=j+1
+                )
+        fig_3.update_layout(height=600, width=800)
+        st.plotly_chart(fig_3)
+    else:
+        fig_3 = make_subplots(rows=1, cols=len(choice), specs=[[{'type':'domain'}]*len(choice)], subplot_titles=choice)
+        for i in range(1):
+            for j in range(len(choice)):
+                fig_3.add_trace(
+                    go.Pie(labels=plot_sentiment(choice[j]).Sentiment, values=plot_sentiment(choice[j]).Tweets, showlegend=True),
+                    i+1, j+1
+                )
+        fig_3.update_layout(height=600, width=800)
+        st.plotly_chart(fig_3)
+st.sidebar.subheader("Breakdown airline by sentiment")
+choice = st.sidebar.multiselect('Pick airlines', ('US Airways','United','American','Southwest','Delta','Virgin America'), key=0)
+if len(choice) > 0:
+    choice_data = data[data.airline.isin(choice)]
+    fig_0 = px.histogram(
+                        choice_data, x='airline', y='airline_sentiment',
+                         histfunc='count', color='airline_sentiment',
+                         facet_col='airline_sentiment', labels={'airline_sentiment':'tweets'},
+                          height=600, width=800)
+    st.plotly_chart(fig_0)
