@@ -113,6 +113,7 @@ if len(choice) > 0:
     
 st.sidebar.header("Word Cloud")
 word_sentiment = st.sidebar.radio('Display word cloud for what sentiment?', ('positive', 'neutral', 'negative'))
+st.set_option('deprecation.showPyplotGlobalUse', False)
 if not st.sidebar.checkbox("Close", True, key='3'):
     st.subheader('Word cloud for %s sentiment' % (word_sentiment))
     df = data[data['airline_sentiment']==word_sentiment]
