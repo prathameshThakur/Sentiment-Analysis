@@ -5,6 +5,8 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
+
 
 st.title("Sentiment Analysis of Tweets about US Airlines ✈️")
 st.sidebar.title("Sentiment Analysis of Tweets 🤖")
@@ -108,3 +110,17 @@ if len(choice) > 0:
                          facet_col='airline_sentiment', labels={'airline_sentiment':'tweets'},
                           height=600, width=800)
     st.plotly_chart(fig_0)
+    
+st.sidebar.header("Word Cloud")
+word_sentiment = st.sidebar.radio('Display word cloud for what sentiment?', ('positive', 'neutral', 'negative'))
+st.set_option('deprecation.showPyplotGlobalUse', False)
+if not st.sidebar.checkbox("Close", True, key='3'):
+    st.subheader('Word cloud for %s sentiment' % (word_sentiment))
+    df = data[data['airline_sentiment']==word_sentiment]
+    words = ' '.join(df['text'])
+    processed_words = ' '.join([word for word in words.split() if 'http' not in word and not word.startswith('@') and word != 'RT'])
+    wordcloud = WordCloud(stopwords=STOPWORDS, background_color='white', width=800, height=640).generate(processed_words)
+    plt.imshow(wordcloud)
+    plt.xticks([])
+    plt.yticks([])
+    st.pyplot()
