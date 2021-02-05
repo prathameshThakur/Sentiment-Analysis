@@ -1,5 +1,6 @@
-python
 streamlit
+matplotlib
+numpy
 plotly
 wordcloud
-matplotlib
+
