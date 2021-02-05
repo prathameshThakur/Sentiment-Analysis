@@ -14,3 +14,16 @@ Using Python and Streamlit to build beautiful and interactive dashboards and web
 - Plotting Location Data on an Interactive Map
 - Plot Number of Tweets by Sentiment for Each Airline
 - Word Cloud for Positive, Neutral, and Negative Tweets
+
+## How to run?
+1. Fork this repo
+2. Clone it in your system
+3. Open the path in your terminal
+4. Install the Requirements of the project:
+    ```
+    $ pip install -r requirements.txt
+    ```
+4. In the terminal enter: 
+    ```
+    $ streamlit run app.py
+    ```
